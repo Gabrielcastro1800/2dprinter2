@@ -19,7 +19,7 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 10px;
+            padding: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -28,21 +28,21 @@
 
         h1 {
             color: var(--accent-color);
-            margin: 10px 0 5px 0;
-            font-size: 24px;
+            margin: 8px 0 4px 0;
+            font-size: 22px;
             text-align: center;
         }
 
-        /* --- HUD DE RECURSOS --- */
+        /* --- HUD DE RECURSOS (RESPONSIVO) --- */
         .hud-recursos {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             width: 100%;
             max-width: 1200px;
             background: #252525;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             box-sizing: border-box;
             justify-content: space-around;
             flex-wrap: wrap;
@@ -51,7 +51,12 @@
 
         .hud-item {
             text-align: center;
-            min-width: 90px;
+            min-width: 85px;
+            flex: 1 1 100%;
+        }
+
+        @media (min-width: 480px) {
+            .hud-item { flex: 1 1 auto; }
         }
 
         .hud-item span {
@@ -71,18 +76,21 @@
         .tinta-status-box {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             background: #1a1a1a;
-            padding: 6px 12px;
+            padding: 6px 10px;
             border-radius: 4px;
             border-left: 4px solid #fff;
+            flex: 1 1 calc(50% - 8px);
+            min-width: 110px;
+            box-sizing: border-box;
         }
-        .tinta-status-box.k { border-left-color: #000000; }
-        .tinta-status-box.c { border-left-color: #00ffff; }
-        .tinta-status-box.m { border-left-color: #ff00ff; }
-        .tinta-status-box.y { border-left-color: #ffff00; }
+        
+        @media (min-width: 768px) {
+            .tinta-status-box { flex: 0 1 auto; }
+        }
 
-        .tinta-info { font-size: 13px; font-weight: bold; }
+        .tinta-info { font-size: 12px; font-weight: bold; }
 
         /* --- PARQUE INDUSTRIAL --- */
         .fazenda-impressoras {
@@ -91,27 +99,29 @@
             background: #252525;
             padding: 10px;
             border-radius: 8px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             box-sizing: border-box;
         }
 
         .grid-maquinas {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             overflow-x: auto;
-            padding-bottom: 5px;
+            padding-bottom: 6px;
+            -webkit-overflow-scrolling: touch;
         }
 
         .card-maquina-status {
             background: #1a1a1a;
-            padding: 8px 15px;
+            padding: 8px 12px;
             border-radius: 6px;
-            min-width: 180px;
+            min-width: 150px;
             cursor: pointer;
             border: 2px solid transparent;
             text-align: left;
             position: relative;
             transition: border-color 0.2s, background 0.2s;
+            flex-shrink: 0;
         }
 
         .card-maquina-status.ativa {
@@ -119,13 +129,13 @@
             background: #2d2d2d;
         }
 
-        .card-maquina-status h4 { margin: 0 0 4px 0; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-maquina-status h4 { margin: 0 0 2px 0; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .card-maquina-status p { margin: 0; font-size: 11px; color: #aaa; }
         
         .badge-status {
-            font-size: 10px;
+            font-size: 9px;
             font-weight: bold;
-            padding: 2px 5px;
+            padding: 2px 4px;
             border-radius: 3px;
             display: inline-block;
             margin-top: 4px;
@@ -136,7 +146,7 @@
         /* --- LAYOUT PRINCIPAL --- */
         .container {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             max-width: 1200px;
             width: 100%;
             flex-direction: column;
@@ -148,50 +158,51 @@
 
         .painel-controle, .painel-impressao, .painel-loja {
             background-color: var(--panel-color);
-            padding: 15px;
+            padding: 12px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             box-sizing: border-box;
             width: 100%;
         }
 
-        .painel-controle { flex: 1; min-width: 280px; }
+        .painel-controle { flex: 1; min-width: 260px; }
         .painel-impressao { flex: 1.2; display: flex; flex-direction: column; align-items: center; }
-        .painel-loja { margin-top: 15px; max-width: 1200px; }
+        .painel-loja { margin-top: 12px; max-width: 1200px; }
 
-        .grupo-controle { margin-bottom: 12px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; }
+        .grupo-controle { margin-bottom: 10px; }
+        label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 12px; color: #ccc; }
 
         input[type="text"], input[type="file"], select, input[type="range"], button {
             width: 100%;
-            padding: 10px;
+            padding: 8px;
             border-radius: 4px;
             border: none;
             background-color: #3d3d3d;
             color: var(--text-color);
             box-sizing: border-box;
-            font-size: 14px;
+            font-size: 13px;
+            outline: none;
         }
-        input[type="range"] { padding: 5px 0; }
+        input[type="range"] { padding: 4px 0; }
         input[type="text"] { border: 1px solid #555; }
 
-        .metodo-carga { display: flex; gap: 5px; margin-top: 5px; }
-        .btn-metodo { padding: 6px; font-size: 11px; margin: 0; background: #444; }
+        .metodo-carga { display: flex; gap: 4px; margin-top: 4px; }
+        .btn-metodo { padding: 5px; font-size: 11px; margin: 0; background: #444; }
         .btn-metodo.ativo { background: var(--accent-color); }
 
         button {
             background-color: var(--accent-color);
             font-weight: bold;
             cursor: pointer;
-            margin-top: 8px;
+            margin-top: 6px;
             transition: background 0.2s;
         }
         button:hover { background-color: #008c95; }
         button:disabled { background-color: #555; cursor: not-allowed; }
 
-        .btn-compra { background-color: #3f51b5; font-size: 12px; padding: 6px; margin-top: 4px; }
+        .btn-compra { background-color: #3f51b5; font-size: 11px; padding: 6px; margin-top: 4px; }
         .btn-compra:hover { background-color: #303f9f; }
-        .btn-comprar-maq { background-color: #ff9800; color: #121212; font-size: 12px; padding: 8px; text-align: left; line-height: 1.3;}
+        .btn-comprar-maq { background-color: #ff9800; color: #121212; font-size: 11px; padding: 6px; text-align: left; line-height: 1.3;}
         .btn-comprar-maq:hover { background-color: #e68a00; }
 
         /* --- ÁREA DO CANVAS --- */
@@ -199,43 +210,44 @@
             position: relative;
             background-color: #fff;
             border: 2px solid #444;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.5);
             width: 100%;
-            max-width: 300px;
+            max-width: 260px;
             aspect-ratio: 1 / 1;
             overflow: hidden;
+            margin: 0 auto;
         }
         canvas { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; image-rendering: pixelated; }
         #canvas-render { pointer-events: none; }
 
-        .status { margin-top: 12px; font-style: italic; color: #bbb; font-size: 13px; text-align: center; line-height: 1.4; }
+        .status { margin-top: 10px; font-style: italic; color: #bbb; font-size: 12px; text-align: center; line-height: 1.3; }
 
         /* --- ESTEIRA LOGÍSTICA / ABAS --- */
-        .abas-galeria { display: flex; gap: 10px; margin-top: 15px; width: 100%; max-width: 1200px; }
-        .aba { flex: 1; padding: 10px; background: #252525; text-align: center; font-weight: bold; cursor: pointer; border-radius: 6px 6px 0 0; }
+        .abas-galeria { display: flex; gap: 6px; margin-top: 12px; width: 100%; max-width: 1200px; }
+        .aba { flex: 1; padding: 8px; background: #252525; text-align: center; font-weight: bold; font-size: 12px; cursor: pointer; border-radius: 6px 6px 0 0; }
         .aba.ativa { background: var(--panel-color); border-bottom: 3px solid var(--accent-color); color: var(--accent-color); }
 
-        .galeria-secao { width: 100%; max-width: 1200px; background-color: var(--panel-color); padding: 15px; border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); box-sizing: border-box; display: none; }
+        .galeria-secao { width: 100%; max-width: 1200px; background-color: var(--panel-color); padding: 12px; border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); box-sizing: border-box; display: none; }
         .galeria-secao.ativa { display: block; }
-        .galeria-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-top: 10px; }
+        .galeria-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; margin-top: 8px; }
 
-        .galeria-item { background-color: #3d3d3d; padding: 8px; border-radius: 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+        .galeria-item { background-color: #3d3d3d; padding: 6px; border-radius: 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
         .galeria-box-img { width: 100%; aspect-ratio: 1 / 1; background-color: #fff; border-radius: 4px; overflow: hidden; cursor: pointer; }
         .galeria-item img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
-        .galeria-item span { font-size: 11px; color: #ccc; display: block; margin: 4px 0; }
-        .galeria-item .preco-tag { color: var(--money-color); font-weight: bold; font-size: 13px; margin-bottom: 4px; }
+        .galeria-item span { font-size: 10px; color: #ccc; display: block; margin: 3px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .galeria-item .preco-tag { color: var(--money-color); font-weight: bold; font-size: 12px; margin-bottom: 2px; }
         
-        .btn-galeria { padding: 6px; font-size: 11px; margin-top: 4px; width: 100%; }
+        .btn-galeria { padding: 5px; font-size: 10px; margin-top: 4px; width: 100%; }
         .btn-vender { background-color: var(--money-color); }
         .btn-vender:hover { background-color: #388e3c; }
 
-        /* --- MODAL --- */
+        /* --- MODAL PREVIEW --- */
         .modal-foco { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.9); display: none; justify-content: center; align-items: center; z-index: 1000; }
         .modal-foco.active { display: flex; }
-        .modal-conteudo { background-color: var(--panel-color); padding: 15px; border-radius: 8px; width: 90%; max-width: 400px; display: flex; flex-direction: column; align-items: center; position: relative; }
+        .modal-conteudo { background-color: var(--panel-color); padding: 12px; border-radius: 8px; width: 85%; max-width: 320px; display: flex; flex-direction: column; align-items: center; position: relative; }
         .modal-conteudo img { width: 100%; aspect-ratio: 1 / 1; object-fit: contain; image-rendering: pixelated; background: white;}
-        .modal-legenda { margin-top: 12px; font-size: 13px; text-align: center; }
-        .modal-fechar { position: absolute; top: -35px; right: 0; font-size: 30px; color: #fff; cursor: pointer; }
+        .modal-legenda { margin-top: 10px; font-size: 12px; text-align: center; }
+        .modal-fechar { position: absolute; top: -30px; right: 0; font-size: 26px; color: #fff; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -248,27 +260,27 @@
             <div class="hud-val money" id="hud-dinheiro">$600.00</div>
         </div>
         <div class="tinta-status-box k">
-            <div class="tinta-info">K (Preto): <span id="val-k">30.00</span> ml</div>
+            <div class="tinta-info">K: <span id="val-k">30.00</span> ml</div>
         </div>
         <div class="tinta-status-box c">
-            <div class="tinta-info">C (Ciano): <span id="val-c">10.00</span> ml</div>
+            <div class="tinta-info">C: <span id="val-c">10.00</span> ml</div>
         </div>
         <div class="tinta-status-box m">
-            <div class="tinta-info">M (Magenta): <span id="val-m">10.00</span> ml</div>
+            <div class="tinta-info">M: <span id="val-m">10.00</span> ml</div>
         </div>
         <div class="tinta-status-box y">
-            <div class="tinta-info">Y (Amarelo): <span id="val-y">10.00</span> ml</div>
+            <div class="tinta-info">Y: <span id="val-y">10.00</span> ml</div>
         </div>
     </div>
 
     <div class="fazenda-impressoras">
-        <label>Parque de Extrusão Concorrente (Clique para alternar monitor visual)</label>
+        <label>Parque de Extrusão Concorrente (Toque para alternar monitor)</label>
         <div class="grid-maquinas" id="lista-maquinas"></div>
     </div>
 
     <div class="container">
         <div class="painel-controle">
-            <h3 id="titulo-maquina-ativa">Painel</h3>
+            <h3 id="titulo-maquina-ativa" style="margin-top: 0; font-size: 16px;">Painel</h3>
             
             <div class="grupo-controle" id="modulo-matriz">
                 <label>Carregamento de Matriz Gravação</label>
@@ -276,12 +288,12 @@
                     <button class="btn-metodo ativo" id="tab-file" onclick="alternarUpload('file')">Arquivo Local</button>
                     <button class="btn-metodo" id="tab-url" onclick="alternarUpload('url')">Link Web</button>
                 </div>
-                <div id="container-file" style="margin-top: 8px;">
+                <div id="container-file" style="margin-top: 6px;">
                     <input type="file" id="upload-image" accept="image/*">
                 </div>
-                <div id="container-url" style="margin-top: 8px; display: none;">
+                <div id="container-url" style="margin-top: 6px; display: none;">
                     <input type="text" id="upload-url" placeholder="URL da imagem...">
-                    <button id="btn-carregar-url" style="margin-top: 5px; padding: 6px; font-size: 12px;">Carregar Link</button>
+                    <button id="btn-carregar-url" style="margin-top: 4px; padding: 5px; font-size: 11px;">Carregar Link</button>
                 </div>
             </div>
 
@@ -305,12 +317,7 @@
             <div class="grupo-controle" id="modulo-escala">
                 <label for="escala">Mesa Proporcional (Resolução)</label>
                 <select id="escala" onchange="salvarConfiguracoesMaquinaAtiva(); ajustarTamanhoCanvas();">
-                    <option value="20">20px (Rápida)</option>
-                    <option value="50">50px (Sprite)</option>
-                    <option value="100" selected>100px (Padrão Máx Loop)</option>
-                    <option value="150" id="opt-150">150px (Gamer)</option>
-                    <option value="300" id="opt-300">300px (Industrial)</option>
-                </select>
+                    </select>
             </div>
 
             <div class="grupo-controle" id="modulo-logistica">
@@ -326,7 +333,7 @@
         </div>
 
         <div class="painel-impressao">
-            <h3 id="nome-mesa-foco">Mesa Focada</h3>
+            <h3 id="nome-mesa-foco" style="margin-top: 0; font-size: 16px;">Mesa Focada</h3>
             <div class="canvas-wrapper" id="mesa-wrapper">
                 <canvas id="canvas-impressora" width="300" height="300"></canvas>
                 <canvas id="canvas-render" width="300" height="300"></canvas>
@@ -336,24 +343,25 @@
     </div>
 
     <div class="painel-loja">
-        <h3>Almoxarifado Líquido & Concessionária de Hardware</h3>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
-            <div style="background:#222; padding:12px; border-radius:4px;">
-                <h5 style="margin:0 0 8px 0; color: #fff;">Insumos Líquidos Básicos (Porções de 10ml)</h5>
-                <div style="display:grid; grid-template-columns: 1fr; gap:5px; font-size:11px;">
+        <h3 style="margin-top: 0; font-size: 16px;">Almoxarifado & Hardware</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px;">
+            <div style="background:#222; padding:10px; border-radius:4px;">
+                <h5 style="margin:0 0 6px 0; color: #fff; font-size:12px;">Insumos Líquidos (Porções 10ml)</h5>
+                <div style="display:grid; grid-template-columns: 1fr; gap:4px;">
                     <button class="btn-compra" onclick="comprarTintaML('k', 5)">Refil Black (K) • $5</button>
                     <button class="btn-compra" style="background:#006666;" onclick="comprarTintaML('c', 20)">Refil Cyan (C) • $20</button>
                     <button class="btn-compra" style="background:#660066;" onclick="comprarTintaML('m', 20)">Refil Magenta (M) • $20</button>
                     <button class="btn-compra" style="background:#666600;" onclick="comprarTintaML('y', 20)">Refil Yellow (Y) • $20</button>
                 </div>
             </div>
-            <div style="background:#222; padding:12px; border-radius:4px;">
-                <h5 style="margin:0 0 8px 0; color: #ff9800;">Catálogo de Expansão de Hardware</h5>
-                <div style="display:flex; flex-direction:column; gap:5px;">
-                    <button class="btn-comprar-maq" onclick="adquirirMaquina('Genesis-X', 450, 1.0, 1.0, false)">Comprar Genesis-X ($450)<br><small>Unidade básica padrão estável.</small></button>
-                    <button class="btn-comprar-maq" style="background:#00bcd4; color:#121212;" onclick="adquirirMaquina('EcoFlow Pro', 1400, 0.5, 0.8, false)">Comprar EcoFlow Pro ($1,400)<br><small>Gasta 50% menos insumo por pixel.</small></button>
-                    <button class="btn-comprar-maq" style="background:#4caf50; color:#fff;" onclick="adquirirMaquina('AeroSteady', 1900, 1.0, 0.12, false)">Comprar AeroSteady ($1,900)<br><small>Máxima Precisão: Erros reduzidos em 88%.</small></button>
-                    <button class="btn-comprar-maq" style="background:#e91e63; color:#fff;" onclick="adquirirMaquina('LoopBot 2D', 2600, 1.3, 4.2, true)">Comprar LoopBot Automação ($2,600)<br><small>Contínua: Imprime e vende sozinha. Max 100px. Desalinhamento alto!</small></button>
+            <div style="background:#222; padding:10px; border-radius:4px;">
+                <h5 style="margin:0 0 6px 0; color: #ff9800; font-size:12px;">Concessionária de Expansão</h5>
+                <div style="display:flex; flex-direction:column; gap:4px;">
+                    <button class="btn-comprar-maq" onclick="adquirirMaquina('microX2d', 320, 1.0, 0.9, false)">Comprar microX2d ($320)<br><small>Habilitador exclusivo de resoluções em 16px.</small></button>
+                    <button class="btn-comprar-maq" style="background:#e91e63; color:#fff;" onclick="adquirirMaquina('micro loopbot', 520, 1.2, 1.8, true)">Comprar micro loopbot ($520)<br><small>Autônoma Econômica. Travada em 20px.</small></button>
+                    <button class="btn-comprar-maq" style="background:#4951b5; color:white;" onclick="adquirirMaquina('Genesis-X', 450, 1.0, 1.0, false)">Comprar Genesis-X ($450)<br><small>Padrão estável até 100px.</small></button>
+                    <button class="btn-comprar-maq" style="background:#00bcd4; color:#121212;" onclick="adquirirMaquina('EcoFlow Pro', 1400, 0.5, 0.8, false)">Comprar EcoFlow Pro ($1,400)<br><small>Gasta 50% menos insumo.</small></button>
+                    <button class="btn-comprar-maq" style="background:#e91e63; color:#fff;" onclick="adquirirMaquina('LoopBot 2D', 2600, 1.3, 4.2, true)">Comprar LoopBot Automação ($2,600)<br><small>Contínua Automática. Até 100px.</small></button>
                 </div>
             </div>
         </div>
@@ -380,7 +388,7 @@
         // ==========================================
         const PRECO_REFILL = { k: 5, c: 20, m: 20, y: 20 };
         const VALOR_QUIMICO_ML = { k: 0.50, c: 2.00, m: 2.00, y: 2.00 };
-        const TICK_PRODUCAO_MS = 140; // Velocidade cadenciada e realista global
+        const TICK_PRODUCAO_MS = 140;
 
         // ==========================================
         // 2. ESTADO GLOBAL DO TYCOON
@@ -404,7 +412,7 @@
         let imagemOriginal = new Image();
 
         // ==========================================
-        // 3. CACHE DE ELEMENTOS DO DOM (Performance)
+        // 3. CACHE DE ELEMENTOS DO DOM
         // ==========================================
         const DOM = {
             dinheiro: document.getElementById('hud-dinheiro'),
@@ -420,10 +428,9 @@
             destino: document.getElementById('destino-impressao'),
             btnImprimir: document.getElementById('btn-imprimir'),
             btnCancelar: document.getElementById('btn-cancelar'),
+            btnCarregarUrl: document.getElementById('btn-carregar-url'),
             statusTexto: document.getElementById('status-texto'),
             mesaWrapper: document.getElementById('mesa-wrapper'),
-            opt150: document.getElementById('opt-150'),
-            opt300: document.getElementById('opt-300'),
             moduloLogistica: document.getElementById('modulo-logistica'),
             canvasPrint: document.getElementById('canvas-impressora'),
             canvasFX: document.getElementById('canvas-render'),
@@ -438,7 +445,7 @@
         const ctxFX = DOM.canvasFX.getContext('2d');
 
         // ==========================================
-        // 4. ATUALIZADORES E INTERFACE DE USUÁRIO (UI)
+        // 4. ATUALIZADORES DE INTERFACE (UI)
         // ==========================================
         function atualizarHUD() {
             DOM.dinheiro.textContent = `$${economia.dinheiro.toFixed(2)}`;
@@ -449,7 +456,6 @@
             atualizarStatusMaquinasUI();
         }
 
-        // Executado apenas ao injetar novos hardwares (Evita Layout Thrashing)
         function gerarEstruturaCardsMaquinas() {
             DOM.listaMaquinas.innerHTML = "";
             maquinas.forEach(m => {
@@ -471,10 +477,8 @@
             maquinas.forEach(m => {
                 const card = DOM.listaMaquinas.querySelector(`[data-id="${m.id}"]`);
                 if (!card) return;
-                
                 card.classList.toggle('ativa', m.id === idMaquinaAtiva);
                 const badge = card.querySelector('.badge-status');
-                
                 if (m.imprimindo) {
                     badge.className = "badge-status printing";
                     badge.textContent = "EM CURSO...";
@@ -483,6 +487,40 @@
                     badge.textContent = "OCIOSA";
                 }
             });
+        }
+
+        // Reconstrói as opções de resolução de acordo com as regras de hardware
+        function processarFiltroResolucoesMesa(m) {
+            DOM.escala.innerHTML = "";
+            let escalasPermitidas = [];
+
+            if (m.modelo === 'microX2d') {
+                escalasPermitidas = [16, 20];
+            } else if (m.modelo === 'micro loopbot') {
+                escalasPermitidas = [20];
+            } else if (m.modelo === 'LoopBot 2D') {
+                escalasPermitidas = [20, 50, 100];
+            } else {
+                escalasPermitidas = [20, 50, 100, 150, 300];
+            }
+
+            escalasPermitidas.forEach(res => {
+                const opt = document.createElement('option');
+                opt.value = res;
+                let desc = `${res}px`;
+                if (res === 16) desc += " (Exclusivo Mínimo)";
+                if (res === 20) desc += " (Micro / Rápida)";
+                if (res === 100) desc += " (Padrão)";
+                if (res === 300) desc += " (Industrial)";
+                opt.textContent = desc;
+                DOM.escala.appendChild(opt);
+            });
+
+            // Fallback caso a resolução configurada anteriormente seja inválida para o novo hardware
+            if (!escalasPermitidas.includes(parseInt(m.config.escala))) {
+                m.config.escala = String(escalasPermitidas[0]);
+            }
+            DOM.escala.value = m.config.escala;
         }
 
         function mudarMaquinaAtiva(id) {
@@ -496,20 +534,11 @@
             DOM.filtro.value = m.config.filtro;
             DOM.velocidade.value = m.config.velocidade;
             DOM.velVal.textContent = `${m.config.velocidade} px/c`;
-            DOM.escala.value = m.config.escala;
+            
+            processarFiltroResolucoesMesa(m);
             DOM.destino.value = m.config.destino;
 
-            if (m.autoVenda) {
-                DOM.moduloLogistica.style.display = "none";
-                DOM.opt150.disabled = DOM.opt300.disabled = true;
-                if (parseInt(m.config.escala) > 100) {
-                    m.config.escala = "100";
-                    DOM.escala.value = "100";
-                }
-            } else {
-                DOM.moduloLogistica.style.display = "block";
-                DOM.opt150.disabled = DOM.opt300.disabled = false;
-            }
+            DOM.moduloLogistica.style.display = m.autoVenda ? "none" : "block";
 
             if (m.imprimindo) {
                 DOM.btnImprimir.disabled = true;
@@ -549,7 +578,7 @@
         }
 
         // ==========================================
-        // 5. HARDWARE & CONCESSIONÁRIA DE MÁQUINAS
+        // 5. CONCESSIONÁRIA DE HARDWARE
         // ==========================================
         function adquirirMaquina(modelo, preco, multTinta, multErro, autoVenda) {
             if (economia.dinheiro >= preco) {
@@ -558,27 +587,26 @@
                 maquinas.push({
                     id: novoId, nome: `${modelo} #${maquinas.filter(m => m.modelo === modelo).length + 1}`,
                     modelo: modelo, multiplicadorTinta: multTinta, multiplicadorErro: multErro, autoVenda: autoVenda,
-                    imprimindo: false, currentX: 0, currentY: 0, largura: 100, altura: 100,
+                    imprimindo: false, currentX: 0, currentY: 0, largura: 20, altura: 20,
                     dadosPixels: null, numGlitches: 0, mlGastos: { c: 0, m: 0, y: 0, k: 0 }, loopInterval: null,
-                    config: { filtro: "normal", velocidade: 8, escala: "100", destino: "publica" },
+                    config: { filtro: "normal", velocidade: 8, escala: modelo === 'microX2d' ? "16" : "20", destino: "publica" },
                     imagemMatriz: null, virtualCanvas: null
                 });
                 gerarEstruturaCardsMaquinas();
                 mudarMaquinaAtiva(novoId);
             } else {
-                alert("Fundos corporativos insuficientes para expandir o parque industrial.");
+                alert("Fundos corporativos insuficientes para expansão do parque industrial.");
             }
         }
 
         // ==========================================
-        // 6. MOTOR DE IMPRESSÃO & FLUXO DE PIXELS
+        // 6. MOTOR DE IMPRESSÃO GRAPHICS PUMP
         // ==========================================
         function ajustarTamanhoCanvas() {
             const m = maquinas.find(maq => maq.id === idMaquinaAtiva);
             if (!m) return;
             
             let alvoEscala = parseInt(m.config.escala);
-            if (m.autoVenda && alvoEscala > 100) alvoEscala = 100;
 
             if (m.imagemMatriz) {
                 let proxy = new Image();
@@ -594,7 +622,7 @@
             }
         }
 
-        function garantirEstruturaMesa(m) {
+        function garantirestruturaMesa(m) {
             if (m.id === idMaquinaAtiva) {
                 DOM.canvasPrint.width = DOM.canvasFX.width = m.largura;
                 DOM.canvasPrint.height = DOM.canvasFX.height = m.altura;
@@ -622,7 +650,7 @@
 
             let fatorGasto = (0.55 / totalPixels) * m.multiplicadorTinta; 
 
-            economia.tintas.c = Math.max(0, economia.tintas.c - (c * fatorGasto));
+            economia.tintas.c = Math.max(0, economy.tintas.c - (c * fatorGasto));
             economia.tintas.m = Math.max(0, economia.tintas.m - (mi * fatorGasto)); 
             economia.tintas.y = Math.max(0, economia.tintas.y - (y * fatorGasto));
             economia.tintas.k = Math.max(0, economia.tintas.k - (k * fatorGasto));
@@ -677,8 +705,8 @@
                 grad.addColorStop(0, `hsl(${Math.random()*360}, 85%, 50%)`);
                 grad.addColorStop(1, `hsl(${Math.random()*360}, 85%, 40%)`);
                 tCtx.fillStyle = grad; tCtx.fillRect(0, 0, m.largura, m.altura);
-                tCtx.fillStyle = "#ffffff"; tCtx.font = "bold 9px Arial";
-                tCtx.fillText("LOOP-BOT", 4, Math.floor(m.altura/2));
+                tCtx.fillStyle = "#ffffff"; tCtx.font = "bold 8px sans-serif";
+                tCtx.fillText("μ-BOT", 2, Math.floor(m.altura/2) + 3);
             }
 
             let imgData = tCtx.getImageData(0, 0, m.largura, m.altura);
@@ -723,7 +751,7 @@
                     ctxPrint.clearRect(0,0, DOM.canvasPrint.width, DOM.canvasPrint.height);
                     ctxPrint.drawImage(m.virtualCanvas, 0, 0);
                     let custo = (m.mlGastos.k * VALOR_QUIMICO_ML.k) + (m.mlGastos.c * VALOR_QUIMICO_ML.c) + (m.mlGastos.m * VALOR_QUIMICO_ML.m) + (m.mlGastos.y * VALOR_QUIMICO_ML.y);
-                    DOM.statusTexto.innerHTML = `Cabeçote: ${Math.floor((m.currentY / m.altura) * 100)}%<br><span style="color:#ff5252;">Erros: ${m.numGlitches}</span> | Custo Químico: $${custo.toFixed(2)}`;
+                    DOM.statusTexto.innerHTML = `Progresso: ${Math.floor((m.currentY / m.altura) * 100)}%<br><span style="color:#ff5252;">Glitches: ${m.numGlitches}</span> | Insumo: $${custo.toFixed(2)}`;
                     
                     ctxFX.clearRect(0, 0, m.largura, m.altura);
                     ctxFX.fillStyle = "rgba(0, 173, 181, 0.85)";
@@ -759,15 +787,14 @@
         }
 
         // ==========================================
-        // 8. LOGÍSTICA COMERCIAL, PREÇOS & GALERIA
+        // 8. LOGÍSTICA COMERCIAL & ARRECADAMENTO
         // ==========================================
         function concluirImpressao(m) {
             m.imprimindo = false;
             if (m.loopInterval) clearInterval(m.loopInterval);
 
-            // Algoritmo de precificação baseado em resolução e distorções (glitches)
             let baseRes = m.largura;
-            let vBase = baseRes <= 25 ? 35 : baseRes <= 60 ? 130 : baseRes <= 100 ? 460 : baseRes <= 150 ? 980 : 2800;
+            let vBase = baseRes <= 16 ? 24 : baseRes <= 25 ? 40 : baseRes <= 60 ? 130 : baseRes <= 100 ? 460 : baseRes <= 150 ? 980 : 2800;
             let fQualidade = Math.max(0.04, 1 - ((m.numGlitches / (m.largura * m.altura)) * 10));
             let precoFinal = parseFloat((vBase * fQualidade).toFixed(2));
 
@@ -779,14 +806,14 @@
                 economia.dinheiro += precoFinal;
                 if (m.id === idMaquinaAtiva) {
                     ctxFX.clearRect(0, 0, DOM.canvasFX.width, DOM.canvasFX.height);
-                    DOM.statusTexto.innerHTML = `🤖 LoopBot despachou peça por <span style="color:var(--money-color); font-weight:bold;">$${precoFinal}</span>!`;
+                    DOM.statusTexto.innerHTML = `🤖 Automação vendeu lote por <span style="color:var(--money-color); font-weight:bold;">$${precoFinal}</span>!`;
                 }
-                setTimeout(() => { if(!m.imprimindo) interstateLoopBot(m); }, 2000);
+                setTimeout(() => { if(!m.imprimindo) interstateLoopBot(m); }, 1500);
             } else {
                 if (m.id === idMaquinaAtiva) {
                     ctxFX.clearRect(0, 0, DOM.canvasFX.width, DOM.canvasFX.height);
                     DOM.btnImprimir.disabled = false; DOM.btnCancelar.style.display = "none";
-                    DOM.statusTexto.textContent = `Lote despachado para logística.`;
+                    DOM.statusTexto.textContent = `Enviado para conferência de estoque.`;
                 }
                 if (m.config.destino === 'publica') injetarCardGaleria(DOM.galeriaPublica, srcData, precoFinal, meta, true);
                 else injetarCardGaleria(DOM.galeriaPrivada, srcData, precoFinal, meta, false);
@@ -808,7 +835,7 @@
             
             const btn = document.createElement('button');
             btn.className = `btn-galeria ${isVitrine ? 'btn-vender' : 'btn-mover'}`;
-            btn.textContent = isVitrine ? "Vender Item 💰" : "Mover para Vitrine ➡️";
+            btn.textContent = isVitrine ? "Vender 💰" : "Liberar Vitrine ➡️";
             
             btn.onclick = () => {
                 if (isVitrine) {
@@ -838,17 +865,17 @@
 
         DOM.btnCancelar.addEventListener('click', () => {
             const m = maquinas.find(maq => maq.id === idMaquinaAtiva);
-            if(m) pararMaquinaErro(m, "Operação abortada via console.");
+            if(m) pararMaquinaErro(m, "Cancelamento manual acionado.");
         });
 
         function comprarTintaML(cor, preco) {
             if (economia.dinheiro >= preco) {
                 economia.dinheiro -= preco; economia.tintas[cor] += 10.0; atualizarHUD();
-            } else alert("Sem caixa disponível.");
+            } else alert("Caixa operacional insuficiente.");
         }
 
         // ==========================================
-        // 9. EVENTOS DE ENTRADA & INTERNOCIONALIZAÇÃO
+        // 9. EVENTOS E ENTRADAS DE MÍDIA
         // ==========================================
         function alternarUpload(tipo) {
             document.getElementById('container-file').style.display = tipo === 'file' ? 'block' : 'none';
@@ -877,7 +904,7 @@
             DOM.statusTexto.textContent = "Baixando requisição externa...";
             imagemOriginal.removeAttribute('crossOrigin'); imagemOriginal.crossOrigin = "anonymous";
             imagemOriginal.onload = () => configurarNovaMatriz(url);
-            imagemOriginal.onerror = () => alert("Falha na requisição (CORS). Baixe a imagem e use Arquivo Local.");
+            imagemOriginal.onerror = () => alert("Bloqueio de CORS na imagem externa. Use arquivo local.");
             imagemOriginal.src = url;
         });
 
@@ -890,7 +917,7 @@
 
         document.getElementById('modal-fechar').onclick = () => DOM.modal.classList.remove('active');
 
-        // Inicialização
+        // Inicialização Global
         gerarEstruturaCardsMaquinas();
         mudarMaquinaAtiva(0);
         atualizarHUD();
