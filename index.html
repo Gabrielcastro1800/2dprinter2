@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrintMaster 2D - Multi-Machine Tycoon</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --panel-color: #1e1e1e;
+            --accent-color: #00adb5;
+            --text-color: #eeeeee;
+            --money-color: #4caf50;
+            --danger-color: #e23e57;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: var(--accent-color);
+            margin: 10px 0 5px 0;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        /* --- HUD DE RECURSOS --- */
+        .hud-recursos {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 1200px;
+            background: #252525;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            border-bottom: 3px solid var(--accent-color);
+        }
+
+        .hud-item {
+            text-align: center;
+            min-width: 90px;
+        }
+
+        .hud-item span {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #aaa;
+        }
+
+        .hud-val {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .hud-val.money { color: var(--money-color); }
+
+        .tinta-status-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #1a1a1a;
+            padding: 6px 12px;
+            border-radius: 4px;
+            border-left: 4px solid #fff;
+        }
+        .tinta-status-box.k { border-left-color: #000000; }
+        .tinta-status-box.c { border-left-color: #00ffff; }
+        .tinta-status-box.m { border-left-color: #ff00ff; }
+        .tinta-status-box.y { border-left-color: #ffff00; }
+
+        .tinta-info { font-size: 13px; font-weight: bold; }
+
+        /* --- PARQUE INDUSTRIAL --- */
+        .fazenda-impressoras {
+            width: 100%;
+            max-width: 1200px;
+            background: #252525;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        .grid-maquinas {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .card-maquina-status {
+            background: #1a1a1a;
+            padding: 8px 15px;
+            border-radius: 6px;
+            min-width: 180px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            text-align: left;
+            position: relative;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .card-maquina-status.ativa {
+            border-color: var(--accent-color);
+            background: #2d2d2d;
+        }
+
+        .card-maquina-status h4 { margin: 0 0 4px 0; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-maquina-status p { margin: 0; font-size: 11px; color: #aaa; }
+        
+        .badge-status {
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 5px;
+            border-radius: 3px;
+            display: inline-block;
+            margin-top: 4px;
+        }
+        .badge-status.idle { background: #444; color: #ccc; }
+        .badge-status.printing { background: #ff9800; color: #121212; }
+
+        /* --- LAYOUT PRINCIPAL --- */
+        .container {
+            display: flex;
+            gap: 15px;
+            max-width: 1200px;
+            width: 100%;
+            flex-direction: column;
+        }
+
+        @media (min-width: 768px) {
+            .container { flex-direction: row; }
+        }
+
+        .painel-controle, .painel-impressao, .painel-loja {
+            background-color: var(--panel-color);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .painel-controle { flex: 1; min-width: 280px; }
+        .painel-impressao { flex: 1.2; display: flex; flex-direction: column; align-items: center; }
+        .painel-loja { margin-top: 15px; max-width: 1200px; }
+
+        .grupo-controle { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; }
+
+        input[type="text"], input[type="file"], select, input[type="range"], button {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: none;
+            background-color: #3d3d3d;
+            color: var(--text-color);
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        input[type="range"] { padding: 5px 0; }
+        input[type="text"] { border: 1px solid #555; }
+
+        .metodo-carga { display: flex; gap: 5px; margin-top: 5px; }
+        .btn-metodo { padding: 6px; font-size: 11px; margin: 0; background: #444; }
+        .btn-metodo.ativo { background: var(--accent-color); }
+
+        button {
+            background-color: var(--accent-color);
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+        button:hover { background-color: #008c95; }
+        button:disabled { background-color: #555; cursor: not-allowed; }
+
+        .btn-compra { background-color: #3f51b5; font-size: 12px; padding: 6px; margin-top: 4px; }
+        .btn-compra:hover { background-color: #303f9f; }
+        .btn-comprar-maq { background-color: #ff9800; color: #121212; font-size: 12px; padding: 8px; text-align: left; line-height: 1.3;}
+        .btn-comprar-maq:hover { background-color: #e68a00; }
+
+        /* --- ÁREA DO CANVAS --- */
+        .canvas-wrapper {
+            position: relative;
+            background-color: #fff;
+            border: 2px solid #444;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 300px;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+        }
+        canvas { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+        #canvas-render { pointer-events: none; }
+
+        .status { margin-top: 12px; font-style: italic; color: #bbb; font-size: 13px; text-align: center; line-height: 1.4; }
+
+        /* --- ESTEIRA LOGÍSTICA / ABAS --- */
+        .abas-galeria { display: flex; gap: 10px; margin-top: 15px; width: 100%; max-width: 1200px; }
+        .aba { flex: 1; padding: 10px; background: #252525; text-align: center; font-weight: bold; cursor: pointer; border-radius: 6px 6px 0 0; }
+        .aba.ativa { background: var(--panel-color); border-bottom: 3px solid var(--accent-color); color: var(--accent-color); }
+
+        .galeria-secao { width: 100%; max-width: 1200px; background-color: var(--panel-color); padding: 15px; border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); box-sizing: border-box; display: none; }
+        .galeria-secao.ativa { display: block; }
+        .galeria-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-top: 10px; }
+
+        .galeria-item { background-color: #3d3d3d; padding: 8px; border-radius: 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+        .galeria-box-img { width: 100%; aspect-ratio: 1 / 1; background-color: #fff; border-radius: 4px; overflow: hidden; cursor: pointer; }
+        .galeria-item img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+        .galeria-item span { font-size: 11px; color: #ccc; display: block; margin: 4px 0; }
+        .galeria-item .preco-tag { color: var(--money-color); font-weight: bold; font-size: 13px; margin-bottom: 4px; }
+        
+        .btn-galeria { padding: 6px; font-size: 11px; margin-top: 4px; width: 100%; }
+        .btn-vender { background-color: var(--money-color); }
+        .btn-vender:hover { background-color: #388e3c; }
+
+        /* --- MODAL --- */
+        .modal-foco { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.9); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-foco.active { display: flex; }
+        .modal-conteudo { background-color: var(--panel-color); padding: 15px; border-radius: 8px; width: 90%; max-width: 400px; display: flex; flex-direction: column; align-items: center; position: relative; }
+        .modal-conteudo img { width: 100%; aspect-ratio: 1 / 1; object-fit: contain; image-rendering: pixelated; background: white;}
+        .modal-legenda { margin-top: 12px; font-size: 13px; text-align: center; }
+        .modal-fechar { position: absolute; top: -35px; right: 0; font-size: 30px; color: #fff; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h1>PrintMaster 2D - Multi-Machine Tycoon</h1>
+
+    <div class="hud-recursos">
+        <div class="hud-item">
+            <span>Saldo Financeiro</span>
+            <div class="hud-val money" id="hud-dinheiro">$600.00</div>
+        </div>
+        <div class="tinta-status-box k">
+            <div class="tinta-info">K (Preto): <span id="val-k">30.00</span> ml</div>
+        </div>
+        <div class="tinta-status-box c">
+            <div class="tinta-info">C (Ciano): <span id="val-c">10.00</span> ml</div>
+        </div>
+        <div class="tinta-status-box m">
+            <div class="tinta-info">M (Magenta): <span id="val-m">10.00</span> ml</div>
+        </div>
+        <div class="tinta-status-box y">
+            <div class="tinta-info">Y (Amarelo): <span id="val-y">10.00</span> ml</div>
+        </div>
+    </div>
+
+    <div class="fazenda-impressoras">
+        <label>Parque de Extrusão Concorrente (Clique para alternar monitor visual)</label>
+        <div class="grid-maquinas" id="lista-maquinas"></div>
+    </div>
+
+    <div class="container">
+        <div class="painel-controle">
+            <h3 id="titulo-maquina-ativa">Painel</h3>
+            
+            <div class="grupo-controle" id="modulo-matriz">
+                <label>Carregamento de Matriz Gravação</label>
+                <div class="metodo-carga">
+                    <button class="btn-metodo ativo" id="tab-file" onclick="alternarUpload('file')">Arquivo Local</button>
+                    <button class="btn-metodo" id="tab-url" onclick="alternarUpload('url')">Link Web</button>
+                </div>
+                <div id="container-file" style="margin-top: 8px;">
+                    <input type="file" id="upload-image" accept="image/*">
+                </div>
+                <div id="container-url" style="margin-top: 8px; display: none;">
+                    <input type="text" id="upload-url" placeholder="URL da imagem...">
+                    <button id="btn-carregar-url" style="margin-top: 5px; padding: 6px; font-size: 12px;">Carregar Link</button>
+                </div>
+            </div>
+
+            <div class="grupo-controle">
+                <label for="filtro">Perfil Químico (Filtro)</label>
+                <select id="filtro" onchange="salvarConfiguracoesMaquinaAtiva()">
+                    <option value="grayscale">Monocromático (Apenas K)</option>
+                    <option value="normal" selected>Injeção Colorida (CMYK)</option>
+                    <option value="sepia">Sépia Comercial (CMYK)</option>
+                    <option value="invert">Negativo Invertido</option>
+                    <option value="threshold">Contraste Purista</option>
+                </select>
+            </div>
+
+            <div class="grupo-controle">
+                <label for="velocidade">Avanço Mecânico</label>
+                <input type="range" id="velocidade" min="1" max="50" value="8" oninput="ajustarSliderVel(this.value)">
+                <span id="vel-val">8 px/c</span>
+            </div>
+
+            <div class="grupo-controle" id="modulo-escala">
+                <label for="escala">Mesa Proporcional (Resolução)</label>
+                <select id="escala" onchange="salvarConfiguracoesMaquinaAtiva(); ajustarTamanhoCanvas();">
+                    <option value="20">20px (Rápida)</option>
+                    <option value="50">50px (Sprite)</option>
+                    <option value="100" selected>100px (Padrão Máx Loop)</option>
+                    <option value="150" id="opt-150">150px (Gamer)</option>
+                    <option value="300" id="opt-300">300px (Industrial)</option>
+                </select>
+            </div>
+
+            <div class="grupo-controle" id="modulo-logistica">
+                <label for="destino-impressao">Logística de Destino</label>
+                <select id="destino-impressao" onchange="salvarConfiguracoesMaquinaAtiva()">
+                    <option value="publica" selected>Mandar para Vitrine Comercial</option>
+                    <option value="privada">Mandar para Galeria Privada</option>
+                </select>
+            </div>
+
+            <button id="btn-imprimir">Iniciar Extrusora Física</button>
+            <button id="btn-cancelar" style="background-color: var(--danger-color); display: none;">Abortar Processo</button>
+        </div>
+
+        <div class="painel-impressao">
+            <h3 id="nome-mesa-foco">Mesa Focada</h3>
+            <div class="canvas-wrapper" id="mesa-wrapper">
+                <canvas id="canvas-impressora" width="300" height="300"></canvas>
+                <canvas id="canvas-render" width="300" height="300"></canvas>
+            </div>
+            <div class="status" id="status-texto">Pronta para receber matriz gráfica.</div>
+        </div>
+    </div>
+
+    <div class="painel-loja">
+        <h3>Almoxarifado Líquido & Concessionária de Hardware</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
+            <div style="background:#222; padding:12px; border-radius:4px;">
+                <h5 style="margin:0 0 8px 0; color: #fff;">Insumos Líquidos Básicos (Porções de 10ml)</h5>
+                <div style="display:grid; grid-template-columns: 1fr; gap:5px; font-size:11px;">
+                    <button class="btn-compra" onclick="comprarTintaML('k', 5)">Refil Black (K) • $5</button>
+                    <button class="btn-compra" style="background:#006666;" onclick="comprarTintaML('c', 20)">Refil Cyan (C) • $20</button>
+                    <button class="btn-compra" style="background:#660066;" onclick="comprarTintaML('m', 20)">Refil Magenta (M) • $20</button>
+                    <button class="btn-compra" style="background:#666600;" onclick="comprarTintaML('y', 20)">Refil Yellow (Y) • $20</button>
+                </div>
+            </div>
+            <div style="background:#222; padding:12px; border-radius:4px;">
+                <h5 style="margin:0 0 8px 0; color: #ff9800;">Catálogo de Expansão de Hardware</h5>
+                <div style="display:flex; flex-direction:column; gap:5px;">
+                    <button class="btn-comprar-maq" onclick="adquirirMaquina('Genesis-X', 450, 1.0, 1.0, false)">Comprar Genesis-X ($450)<br><small>Unidade básica padrão estável.</small></button>
+                    <button class="btn-comprar-maq" style="background:#00bcd4; color:#121212;" onclick="adquirirMaquina('EcoFlow Pro', 1400, 0.5, 0.8, false)">Comprar EcoFlow Pro ($1,400)<br><small>Gasta 50% menos insumo por pixel.</small></button>
+                    <button class="btn-comprar-maq" style="background:#4caf50; color:#fff;" onclick="adquirirMaquina('AeroSteady', 1900, 1.0, 0.12, false)">Comprar AeroSteady ($1,900)<br><small>Máxima Precisão: Erros reduzidos em 88%.</small></button>
+                    <button class="btn-comprar-maq" style="background:#e91e63; color:#fff;" onclick="adquirirMaquina('LoopBot 2D', 2600, 1.3, 4.2, true)">Comprar LoopBot Automação ($2,600)<br><small>Contínua: Imprime e vende sozinha. Max 100px. Desalinhamento alto!</small></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="abas-galeria">
+        <div class="aba" id="aba-privada" onclick="mudarAba('privada')">Galeria Privada</div>
+        <div class="aba ativa" id="aba-publica" onclick="mudarAba('publica')">Vitrine Comercial</div>
+    </div>
+    <div class="galeria-secao" id="sec-privada"><div class="galeria-grid" id="galeria-privada"></div></div>
+    <div class="galeria-secao ativa" id="sec-publica"><div class="galeria-grid" id="galeria-publica"></div></div>
+
+    <div class="modal-foco" id="modal-foco">
+        <div class="modal-conteudo">
+            <span class="modal-fechar" id="modal-fechar">&times;</span>
+            <img id="modal-img" src="" alt="Foco">
+            <div class="modal-legenda" id="modal-legenda"></div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. CONSTANTES & CONFIGURAÇÕES FIXAS
+        // ==========================================
+        const PRECO_REFILL = { k: 5, c: 20, m: 20, y: 20 };
+        const VALOR_QUIMICO_ML = { k: 0.50, c: 2.00, m: 2.00, y: 2.00 };
+        const TICK_PRODUCAO_MS = 140; // Velocidade cadenciada e realista global
+
+        // ==========================================
+        // 2. ESTADO GLOBAL DO TYCOON
+        // ==========================================
+        let economia = {
+            dinheiro: 600.00, 
+            tintas: { c: 10.0, m: 10.0, y: 10.0, k: 30.0 } 
+        };
+
+        let maquinas = [
+            { 
+                id: 0, nome: "Genesis-X Primária", modelo: "Genesis-X", 
+                multiplicadorTinta: 1.0, multiplicadorErro: 1.0, autoVenda: false,
+                imprimindo: false, currentX: 0, currentY: 0, largura: 100, altura: 100,
+                dadosPixels: null, numGlitches: 0, mlGastos: { c: 0, m: 0, y: 0, k: 0 },
+                loopInterval: null, config: { filtro: "normal", velocidade: 8, escala: "100", destino: "publica" }, 
+                imagemMatriz: null, virtualCanvas: null 
+            }
+        ];
+        let idMaquinaAtiva = 0;
+        let imagemOriginal = new Image();
+
+        // ==========================================
+        // 3. CACHE DE ELEMENTOS DO DOM (Performance)
+        // ==========================================
+        const DOM = {
+            dinheiro: document.getElementById('hud-dinheiro'),
+            k: document.getElementById('val-k'), c: document.getElementById('val-c'),
+            m: document.getElementById('val-m'), y: document.getElementById('val-y'),
+            listaMaquinas: document.getElementById('lista-maquinas'),
+            tituloAtivo: document.getElementById('titulo-maquina-ativa'),
+            mesaFoco: document.getElementById('nome-mesa-foco'),
+            filtro: document.getElementById('filtro'),
+            velocidade: document.getElementById('velocidade'),
+            velVal: document.getElementById('vel-val'),
+            escala: document.getElementById('escala'),
+            destino: document.getElementById('destino-impressao'),
+            btnImprimir: document.getElementById('btn-imprimir'),
+            btnCancelar: document.getElementById('btn-cancelar'),
+            statusTexto: document.getElementById('status-texto'),
+            mesaWrapper: document.getElementById('mesa-wrapper'),
+            opt150: document.getElementById('opt-150'),
+            opt300: document.getElementById('opt-300'),
+            moduloLogistica: document.getElementById('modulo-logistica'),
+            canvasPrint: document.getElementById('canvas-impressora'),
+            canvasFX: document.getElementById('canvas-render'),
+            galeriaPrivada: document.getElementById('galeria-privada'),
+            galeriaPublica: document.getElementById('galeria-publica'),
+            modal: document.getElementById('modal-foco'),
+            modalImg: document.getElementById('modal-img'),
+            modalLegenda: document.getElementById('modal-legenda')
+        };
+        
+        const ctxPrint = DOM.canvasPrint.getContext('2d');
+        const ctxFX = DOM.canvasFX.getContext('2d');
+
+        // ==========================================
+        // 4. ATUALIZADORES E INTERFACE DE USUÁRIO (UI)
+        // ==========================================
+        function atualizarHUD() {
+            DOM.dinheiro.textContent = `$${economia.dinheiro.toFixed(2)}`;
+            DOM.c.textContent = economia.tintas.c.toFixed(2);
+            DOM.m.textContent = economia.tintas.m.toFixed(2);
+            DOM.y.textContent = economia.tintas.y.toFixed(2);
+            DOM.k.textContent = economia.tintas.k.toFixed(2);
+            atualizarStatusMaquinasUI();
+        }
+
+        // Executado apenas ao injetar novos hardwares (Evita Layout Thrashing)
+        function gerarEstruturaCardsMaquinas() {
+            DOM.listaMaquinas.innerHTML = "";
+            maquinas.forEach(m => {
+                const card = document.createElement('div');
+                card.className = `card-maquina-status ${m.id === idMaquinaAtiva ? 'ativa' : ''}`;
+                card.setAttribute('data-id', m.id);
+                card.onclick = () => mudarMaquinaAtiva(m.id);
+                card.innerHTML = `
+                    <h4>${m.nome}</h4>
+                    <p>Mod: ${m.modelo}</p>
+                    <span class="badge-status idle">OCIOSA</span>
+                `;
+                DOM.listaMaquinas.appendChild(card);
+            });
+            atualizarStatusMaquinasUI();
+        }
+
+        function atualizarStatusMaquinasUI() {
+            maquinas.forEach(m => {
+                const card = DOM.listaMaquinas.querySelector(`[data-id="${m.id}"]`);
+                if (!card) return;
+                
+                card.classList.toggle('ativa', m.id === idMaquinaAtiva);
+                const badge = card.querySelector('.badge-status');
+                
+                if (m.imprimindo) {
+                    badge.className = "badge-status printing";
+                    badge.textContent = "EM CURSO...";
+                } else {
+                    badge.className = "badge-status idle";
+                    badge.textContent = "OCIOSA";
+                }
+            });
+        }
+
+        function mudarMaquinaAtiva(id) {
+            salvarConfiguracoesMaquinaAtiva();
+            idMaquinaAtiva = id;
+            
+            const m = maquinas.find(maq => maq.id === id);
+            DOM.mesaFoco.textContent = `Mesa: ${m.nome}`;
+            DOM.tituloAtivo.textContent = `Mesa Operacional: ${m.nome}`;
+            
+            DOM.filtro.value = m.config.filtro;
+            DOM.velocidade.value = m.config.velocidade;
+            DOM.velVal.textContent = `${m.config.velocidade} px/c`;
+            DOM.escala.value = m.config.escala;
+            DOM.destino.value = m.config.destino;
+
+            if (m.autoVenda) {
+                DOM.moduloLogistica.style.display = "none";
+                DOM.opt150.disabled = DOM.opt300.disabled = true;
+                if (parseInt(m.config.escala) > 100) {
+                    m.config.escala = "100";
+                    DOM.escala.value = "100";
+                }
+            } else {
+                DOM.moduloLogistica.style.display = "block";
+                DOM.opt150.disabled = DOM.opt300.disabled = false;
+            }
+
+            if (m.imprimindo) {
+                DOM.btnImprimir.disabled = true;
+                DOM.btnCancelar.style.display = "block";
+            } else {
+                DOM.btnImprimir.disabled = m.autoVenda ? false : (!m.imagemMatriz);
+                DOM.btnCancelar.style.display = "none";
+            }
+
+            if (m.virtualCanvas) {
+                DOM.canvasPrint.width = DOM.canvasFX.width = m.largura;
+                DOM.canvasPrint.height = DOM.canvasFX.height = m.altura;
+                DOM.mesaWrapper.style.aspectRatio = `${m.largura / m.altura}`;
+                ctxPrint.clearRect(0, 0, DOM.canvasPrint.width, DOM.canvasPrint.height);
+                ctxPrint.drawImage(m.virtualCanvas, 0, 0);
+                DOM.statusTexto.innerHTML = m.imprimindo ? `Processando em segundo plano: ${Math.floor((m.currentY / m.altura) * 100)}%` : "Aguardando sinalização.";
+            } else {
+                ajustarTamanhoCanvas();
+                DOM.statusTexto.textContent = m.autoVenda ? "Pronta para varredura procedural autônoma." : "Nenhuma matriz injetada.";
+            }
+            atualizarStatusMaquinasUI();
+        }
+
+        function salvarConfiguracoesMaquinaAtiva() {
+            const m = maquinas.find(maq => maq.id === idMaquinaAtiva);
+            if(m) {
+                m.config.filtro = DOM.filtro.value;
+                m.config.velocidade = parseInt(DOM.velocidade.value);
+                m.config.destino = DOM.destino.value;
+                m.config.escala = DOM.escala.value;
+            }
+        }
+
+        function ajustarSliderVel(val) {
+            DOM.velVal.textContent = `${val} px/c`;
+            salvarConfiguracoesMaquinaAtiva();
+        }
+
+        // ==========================================
+        // 5. HARDWARE & CONCESSIONÁRIA DE MÁQUINAS
+        // ==========================================
+        function adquirirMaquina(modelo, preco, multTinta, multErro, autoVenda) {
+            if (economia.dinheiro >= preco) {
+                economia.dinheiro -= preco;
+                let novoId = maquinas.length;
+                maquinas.push({
+                    id: novoId, nome: `${modelo} #${maquinas.filter(m => m.modelo === modelo).length + 1}`,
+                    modelo: modelo, multiplicadorTinta: multTinta, multiplicadorErro: multErro, autoVenda: autoVenda,
+                    imprimindo: false, currentX: 0, currentY: 0, largura: 100, altura: 100,
+                    dadosPixels: null, numGlitches: 0, mlGastos: { c: 0, m: 0, y: 0, k: 0 }, loopInterval: null,
+                    config: { filtro: "normal", velocidade: 8, escala: "100", destino: "publica" },
+                    imagemMatriz: null, virtualCanvas: null
+                });
+                gerarEstruturaCardsMaquinas();
+                mudarMaquinaAtiva(novoId);
+            } else {
+                alert("Fundos corporativos insuficientes para expandir o parque industrial.");
+            }
+        }
+
+        // ==========================================
+        // 6. MOTOR DE IMPRESSÃO & FLUXO DE PIXELS
+        // ==========================================
+        function ajustarTamanhoCanvas() {
+            const m = maquinas.find(maq => maq.id === idMaquinaAtiva);
+            if (!m) return;
+            
+            let alvoEscala = parseInt(m.config.escala);
+            if (m.autoVenda && alvoEscala > 100) alvoEscala = 100;
+
+            if (m.imagemMatriz) {
+                let proxy = new Image();
+                proxy.onload = () => {
+                    m.largura = alvoEscala;
+                    m.altura = Math.floor(alvoEscala * (proxy.height / proxy.width));
+                    garantirEstruturaMesa(m);
+                };
+                proxy.src = m.imagemMatriz;
+            } else {
+                m.largura = m.altura = alvoEscala;
+                garantirEstruturaMesa(m);
+            }
+        }
+
+        function garantirEstruturaMesa(m) {
+            if (m.id === idMaquinaAtiva) {
+                DOM.canvasPrint.width = DOM.canvasFX.width = m.largura;
+                DOM.canvasPrint.height = DOM.canvasFX.height = m.altura;
+                DOM.mesaWrapper.style.aspectRatio = `${m.largura / m.altura}`;
+            }
+            if (!m.virtualCanvas || m.virtualCanvas.width !== m.largura || m.virtualCanvas.height !== m.altura) {
+                m.virtualCanvas = document.createElement('canvas');
+                m.virtualCanvas.width = m.largura; m.virtualCanvas.height = m.altura;
+                m.virtualCanvas.getContext('2d').fillStyle = "#ffffff";
+                m.virtualCanvas.getContext('2d').fillRect(0, 0, m.largura, m.altura);
+            }
+        }
+
+        function consumirTintaRGB(r, g, b, filtro, m, totalPixels) {
+            let c = 0, mi = 0, y = 0, k = 0;
+            if (filtro === 'grayscale') {
+                k = 1 - ((0.2126 * r + 0.7152 * g + 0.0722 * b) / 255);
+            } else {
+                let rf = r/255, gf = g/255, bf = b/255;
+                k = 1 - Math.max(rf, gf, bf);
+                c = (k === 1) ? 0 : (1 - rf - k) / (1 - k);
+                mi = (k === 1) ? 0 : (1 - gf - k) / (1 - k);
+                y = (k === 1) ? 0 : (1 - bf - k) / (1 - k);
+            }
+
+            let fatorGasto = (0.55 / totalPixels) * m.multiplicadorTinta; 
+
+            economia.tintas.c = Math.max(0, economia.tintas.c - (c * fatorGasto));
+            economia.tintas.m = Math.max(0, economia.tintas.m - (mi * fatorGasto)); 
+            economia.tintas.y = Math.max(0, economia.tintas.y - (y * fatorGasto));
+            economia.tintas.k = Math.max(0, economia.tintas.k - (k * fatorGasto));
+
+            m.mlGastos.c += c * fatorGasto; m.mlGastos.m += mi * fatorGasto; 
+            m.mlGastos.y += y * fatorGasto; m.mlGastos.k += k * fatorGasto;
+        }
+
+        DOM.btnImprimir.addEventListener('click', () => {
+            const m = maquinas.find(maq => maq.id === idMaquinaAtiva);
+            if (m && !m.imprimindo) executarCiclo(m);
+        });
+
+        function executarCiclo(m) {
+            salvarConfiguracoesMaquinaAtiva();
+            const f = m.config.filtro;
+            
+            if (f === 'grayscale' ? economia.tintas.k <= 0.0001 : (economia.tintas.c <= 0.0001 && economia.tintas.m <= 0.0001 && economia.tintas.y <= 0.0001)) {
+                alert(`Reservatório químico vazio na unidade ${m.nome}.`);
+                return;
+            }
+
+            m.imprimindo = true; m.numGlitches = 0; m.currentX = 0; m.currentY = 0;
+            m.mlGastos = { c: 0, m: 0, y: 0, k: 0 };
+
+            if (m.id === idMaquinaAtiva) {
+                DOM.btnImprimir.disabled = true;
+                DOM.btnCancelar.style.display = "block";
+            }
+
+            const imgInterna = new Image();
+            if (m.imagemMatriz) {
+                imgInterna.onload = () => inicializarInjecaoFisica(m, imgInterna, f);
+                imgInterna.src = m.imagemMatriz;
+            } else {
+                inicializarInjecaoFisica(m, null, f);
+            }
+        }
+
+        function inicializarInjecaoFisica(m, imgRef, filtroAtual) {
+            const vCtx = m.virtualCanvas.getContext('2d');
+            vCtx.fillStyle = "#ffffff"; vCtx.fillRect(0, 0, m.largura, m.altura);
+
+            const tCanvas = document.createElement('canvas');
+            tCanvas.width = m.largura; tCanvas.height = m.altura;
+            const tCtx = tCanvas.getContext('2d');
+
+            if (imgRef) {
+                tCtx.drawImage(imgRef, 0, 0, m.largura, m.altura);
+            } else {
+                let grad = tCtx.createLinearGradient(0, 0, m.largura, m.altura);
+                grad.addColorStop(0, `hsl(${Math.random()*360}, 85%, 50%)`);
+                grad.addColorStop(1, `hsl(${Math.random()*360}, 85%, 40%)`);
+                tCtx.fillStyle = grad; tCtx.fillRect(0, 0, m.largura, m.altura);
+                tCtx.fillStyle = "#ffffff"; tCtx.font = "bold 9px Arial";
+                tCtx.fillText("LOOP-BOT", 4, Math.floor(m.altura/2));
+            }
+
+            let imgData = tCtx.getImageData(0, 0, m.largura, m.altura);
+            processarMatrizFiltro(imgData.data, filtroAtual);
+            m.dadosPixels = imgData.data;
+
+            const totalPixels = m.largura * m.altura;
+
+            m.loopInterval = setInterval(() => {
+                if (!m.imprimindo) { clearInterval(m.loopInterval); return; }
+
+                const vAtual = m.config.velocidade;
+                let chanceErro = vAtual > 1 ? Math.pow((vAtual - 1) / 50, 2) * 0.25 * m.multiplicadorErro : 0;
+
+                for (let i = 0; i < vAtual; i++) {
+                    if (m.currentY >= m.altura) {
+                        clearInterval(m.loopInterval);
+                        concluirImpressao(m);
+                        return;
+                    }
+
+                    let tx = m.currentX; let ty = m.currentY;
+                    let idx = (ty * m.largura + tx) * 4;
+                    let r = m.dadosPixels[idx], g = m.dadosPixels[idx+1], b = m.dadosPixels[idx+2], a = m.dadosPixels[idx+3];
+
+                    if (chanceErro > 0 && Math.random() < chanceErro) {
+                        m.numGlitches++;
+                        if (Math.random() < 0.5) { r = 255; g = 0; b = 255; } else { tx = Math.min(m.largura-1, tx + Math.floor(Math.random()*3)); }
+                    }
+
+                    if (a > 10) {
+                        consumirTintaRGB(r, g, b, filtroAtual, m, totalPixels);
+                        vCtx.fillStyle = `rgba(${r},${g},${b},${a/255})`;
+                        vCtx.fillRect(tx, ty, 1, 1);
+                    }
+
+                    m.currentX++;
+                    if (m.currentX >= m.largura) { m.currentX = 0; m.currentY++; }
+                }
+
+                if (m.id === idMaquinaAtiva) {
+                    ctxPrint.clearRect(0,0, DOM.canvasPrint.width, DOM.canvasPrint.height);
+                    ctxPrint.drawImage(m.virtualCanvas, 0, 0);
+                    let custo = (m.mlGastos.k * VALOR_QUIMICO_ML.k) + (m.mlGastos.c * VALOR_QUIMICO_ML.c) + (m.mlGastos.m * VALOR_QUIMICO_ML.m) + (m.mlGastos.y * VALOR_QUIMICO_ML.y);
+                    DOM.statusTexto.innerHTML = `Cabeçote: ${Math.floor((m.currentY / m.altura) * 100)}%<br><span style="color:#ff5252;">Erros: ${m.numGlitches}</span> | Custo Químico: $${custo.toFixed(2)}`;
+                    
+                    ctxFX.clearRect(0, 0, m.largura, m.altura);
+                    ctxFX.fillStyle = "rgba(0, 173, 181, 0.85)";
+                    ctxFX.fillRect(m.currentX, m.currentY, Math.max(2, m.largura * 0.08), 1);
+                }
+
+                if (m.currentY % 2 === 0) atualizarHUD();
+            }, TICK_PRODUCAO_MS);
+
+            atualizarStatusMaquinasUI();
+        }
+
+        // ==========================================
+        // 7. SISTEMA DE FILTROS GRÁFICOS
+        // ==========================================
+        function processarMatrizFiltro(data, tipo) {
+            for (let i = 0; i < data.length; i += 4) {
+                if (tipo === 'grayscale') {
+                    let v = 0.2126 * data[i] + 0.7152 * data[i+1] + 0.0722 * data[i+2];
+                    data[i] = data[i+1] = data[i+2] = v;
+                } else if (tipo === 'sepia') {
+                    let r = data[i], g = data[i+1], b = data[i+2];
+                    data[i] = (r * .393) + (g *.769) + (b * .189);
+                    data[i+1] = (r * .349) + (g *.686) + (b * .168);
+                    data[i+2] = (r * .272) + (g *.534) + (b * .131);
+                } else if (tipo === 'invert') {
+                    data[i] = 255-data[i]; data[i+1] = 255-data[i+1]; data[i+2] = 255-data[i+2];
+                } else if (tipo === 'threshold') {
+                    let v = (0.2126 * data[i] + 0.7152 * data[i+1] + 0.0722 * data[i+2] >= 128) ? 255 : 0;
+                    data[i] = data[i+1] = data[i+2] = v;
+                }
+            }
+        }
+
+        // ==========================================
+        // 8. LOGÍSTICA COMERCIAL, PREÇOS & GALERIA
+        // ==========================================
+        function concluirImpressao(m) {
+            m.imprimindo = false;
+            if (m.loopInterval) clearInterval(m.loopInterval);
+
+            // Algoritmo de precificação baseado em resolução e distorções (glitches)
+            let baseRes = m.largura;
+            let vBase = baseRes <= 25 ? 35 : baseRes <= 60 ? 130 : baseRes <= 100 ? 460 : baseRes <= 150 ? 980 : 2800;
+            let fQualidade = Math.max(0.04, 1 - ((m.numGlitches / (m.largura * m.altura)) * 10));
+            let precoFinal = parseFloat((vBase * fQualidade).toFixed(2));
+
+            const custoTotal = (m.mlGastos.k * VALOR_QUIMICO_ML.k) + (m.mlGastos.c * VALOR_QUIMICO_ML.c) + (m.mlGastos.m * VALOR_QUIMICO_ML.m) + (m.mlGastos.y * VALOR_QUIMICO_ML.y);
+            const srcData = m.virtualCanvas.toDataURL();
+            const meta = `Gasto: $${custoTotal.toFixed(2)} | Erros: ${m.numGlitches} | ${m.largura}px`;
+
+            if (m.autoVenda) {
+                economia.dinheiro += precoFinal;
+                if (m.id === idMaquinaAtiva) {
+                    ctxFX.clearRect(0, 0, DOM.canvasFX.width, DOM.canvasFX.height);
+                    DOM.statusTexto.innerHTML = `🤖 LoopBot despachou peça por <span style="color:var(--money-color); font-weight:bold;">$${precoFinal}</span>!`;
+                }
+                setTimeout(() => { if(!m.imprimindo) interstateLoopBot(m); }, 2000);
+            } else {
+                if (m.id === idMaquinaAtiva) {
+                    ctxFX.clearRect(0, 0, DOM.canvasFX.width, DOM.canvasFX.height);
+                    DOM.btnImprimir.disabled = false; DOM.btnCancelar.style.display = "none";
+                    DOM.statusTexto.textContent = `Lote despachado para logística.`;
+                }
+                if (m.config.destino === 'publica') injetarCardGaleria(DOM.galeriaPublica, srcData, precoFinal, meta, true);
+                else injetarCardGaleria(DOM.galeriaPrivada, srcData, precoFinal, meta, false);
+            }
+            atualizarHUD();
+        }
+
+        function interstateLoopBot(m) {
+            if(!m.imprimindo) executarCiclo(m);
+        }
+
+        function injetarCardGaleria(targetContainer, src, preco, meta, isVitrine) {
+            const item = document.createElement('div'); item.className = 'galeria-item';
+            item.innerHTML = `
+                <div class="galeria-box-img"><img src="${src}"></div>
+                <span>${meta}</span>
+                <div class="preco-tag">$${preco.toFixed(2)}</div>
+            `;
+            
+            const btn = document.createElement('button');
+            btn.className = `btn-galeria ${isVitrine ? 'btn-vender' : 'btn-mover'}`;
+            btn.textContent = isVitrine ? "Vender Item 💰" : "Mover para Vitrine ➡️";
+            
+            btn.onclick = () => {
+                if (isVitrine) {
+                    economia.dinheiro += preco; item.remove(); atualizarHUD();
+                } else {
+                    item.remove(); injetarCardGaleria(DOM.galeriaPublica, src, preco, meta, true);
+                }
+            };
+            
+            item.appendChild(btn);
+            item.querySelector('.galeria-box-img').onclick = () => {
+                DOM.modalImg.src = src; DOM.modalLegenda.textContent = meta; DOM.modal.classList.add('active');
+            };
+            targetContainer.insertBefore(item, targetContainer.firstChild);
+        }
+
+        function pararMaquinaErro(m, msg) {
+            m.imprimindo = false;
+            if(m.loopInterval) clearInterval(m.loopInterval);
+            if (m.id === idMaquinaAtiva) {
+                DOM.statusTexto.textContent = msg;
+                DOM.btnImprimir.disabled = false; DOM.btnCancelar.style.display = "none";
+                ctxFX.clearRect(0, 0, DOM.canvasFX.width, DOM.canvasFX.height);
+            }
+            atualizarHUD();
+        }
+
+        DOM.btnCancelar.addEventListener('click', () => {
+            const m = maquinas.find(maq => maq.id === idMaquinaAtiva);
+            if(m) pararMaquinaErro(m, "Operação abortada via console.");
+        });
+
+        function comprarTintaML(cor, preco) {
+            if (economia.dinheiro >= preco) {
+                economia.dinheiro -= preco; economia.tintas[cor] += 10.0; atualizarHUD();
+            } else alert("Sem caixa disponível.");
+        }
+
+        // ==========================================
+        // 9. EVENTOS DE ENTRADA & INTERNOCIONALIZAÇÃO
+        // ==========================================
+        function alternarUpload(tipo) {
+            document.getElementById('container-file').style.display = tipo === 'file' ? 'block' : 'none';
+            document.getElementById('container-url').style.display = tipo === 'url' ? 'block' : 'none';
+            document.getElementById('tab-file').classList.toggle('ativo', tipo === 'file');
+            document.getElementById('tab-url').classList.toggle('ativo', tipo === 'url');
+        }
+
+        function configurarNovaMatriz(srcStr) {
+            const m = maquinas.find(maq => maq.id === idMaquinaAtiva);
+            if(m) {
+                m.imagemMatriz = srcStr; DOM.statusTexto.textContent = "Matriz em cache flutuante.";
+                DOM.btnImprimir.disabled = false; ajustarTamanhoCanvas();
+            }
+        }
+
+        document.getElementById('upload-image').addEventListener('change', function(e) {
+            const file = e.target.files[0]; if (!file) return;
+            const r = new FileReader();
+            r.onload = (ev) => { imagemOriginal.onload = () => configurarNovaMatriz(ev.target.result); imagemOriginal.src = ev.target.result; };
+            r.readAsDataURL(file);
+        });
+
+        DOM.btnCarregarUrl.addEventListener('click', () => {
+            const url = document.getElementById('upload-url').value.trim(); if(!url) return;
+            DOM.statusTexto.textContent = "Baixando requisição externa...";
+            imagemOriginal.removeAttribute('crossOrigin'); imagemOriginal.crossOrigin = "anonymous";
+            imagemOriginal.onload = () => configurarNovaMatriz(url);
+            imagemOriginal.onerror = () => alert("Falha na requisição (CORS). Baixe a imagem e use Arquivo Local.");
+            imagemOriginal.src = url;
+        });
+
+        function mudarAba(aba) {
+            document.getElementById('aba-privada').classList.toggle('ativa', aba === 'privada');
+            document.getElementById('aba-publica').classList.toggle('ativa', aba === 'publica');
+            document.getElementById('sec-privada').classList.toggle('ativa', aba === 'privada');
+            document.getElementById('sec-publica').classList.toggle('ativa', aba === 'publica');
+        }
+
+        document.getElementById('modal-fechar').onclick = () => DOM.modal.classList.remove('active');
+
+        // Inicialização
+        gerarEstruturaCardsMaquinas();
+        mudarMaquinaAtiva(0);
+        atualizarHUD();
+    </script>
+</body>
+</html>
