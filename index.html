@@ -202,7 +202,7 @@
 
         .btn-compra { background-color: #3f51b5; font-size: 11px; padding: 6px; margin-top: 4px; }
         .btn-compra:hover { background-color: #303f9f; }
-        .btn-comprar-maq { background-color: #ff9800; color: #121212; font-size: 11px; padding: 6px; text-align: left; line-height: 1.3;}
+        .btn-comprar-maq { background-color: #ff9800; color: #121212; font-size: 11px; padding: 8px; text-align: left; line-height: 1.3;}
         .btn-comprar-maq:hover { background-color: #e68a00; }
 
         /* --- ÁREA DO CANVAS --- */
@@ -489,7 +489,6 @@
             });
         }
 
-        // Reconstrói as opções de resolução de acordo com as regras de hardware
         function processarFiltroResolucoesMesa(m) {
             DOM.escala.innerHTML = "";
             let escalasPermitidas = [];
@@ -516,7 +515,6 @@
                 DOM.escala.appendChild(opt);
             });
 
-            // Fallback caso a resolução configurada anteriormente seja inválida para o novo hardware
             if (!escalasPermitidas.includes(parseInt(m.config.escala))) {
                 m.config.escala = String(escalasPermitidas[0]);
             }
@@ -554,10 +552,10 @@
                 DOM.mesaWrapper.style.aspectRatio = `${m.largura / m.altura}`;
                 ctxPrint.clearRect(0, 0, DOM.canvasPrint.width, DOM.canvasPrint.height);
                 ctxPrint.drawImage(m.virtualCanvas, 0, 0);
-                DOM.statusTexto.innerHTML = m.imprimindo ? `Processando em segundo plano: ${Math.floor((m.currentY / m.altura) * 100)}%` : "Aguardando sinalização.";
+                DOM.statusTexto.innerHTML = m.imprimindo ? `Processando: ${Math.floor((m.currentY / m.altura) * 100)}%` : "Aguardando sinalização.";
             } else {
                 ajustarTamanhoCanvas();
-                DOM.statusTexto.textContent = m.autoVenda ? "Pronta para varredura procedural autônoma." : "Nenhuma matriz injetada.";
+                DOM.statusTexto.textContent = m.autoVenda ? "Pronta para varredura autônoma." : "Nenhuma matriz injetada.";
             }
             atualizarStatusMaquinasUI();
         }
@@ -595,7 +593,7 @@
                 gerarEstruturaCardsMaquinas();
                 mudarMaquinaAtiva(novoId);
             } else {
-                alert("Fundos corporativos insuficientes para expansão do parque industrial.");
+                alert("Fundos insuficientes para expansão industrial.");
             }
         }
 
@@ -622,7 +620,7 @@
             }
         }
 
-        function garantirestruturaMesa(m) {
+        function garantirEstruturaMesa(m) {
             if (m.id === idMaquinaAtiva) {
                 DOM.canvasPrint.width = DOM.canvasFX.width = m.largura;
                 DOM.canvasPrint.height = DOM.canvasFX.height = m.altura;
@@ -650,7 +648,7 @@
 
             let fatorGasto = (0.55 / totalPixels) * m.multiplicadorTinta; 
 
-            economia.tintas.c = Math.max(0, economy.tintas.c - (c * fatorGasto));
+            economia.tintas.c = Math.max(0, economia.tintas.c - (c * fatorGasto));
             economia.tintas.m = Math.max(0, economia.tintas.m - (mi * fatorGasto)); 
             economia.tintas.y = Math.max(0, economia.tintas.y - (y * fatorGasto));
             economia.tintas.k = Math.max(0, economia.tintas.k - (k * fatorGasto));
@@ -669,7 +667,7 @@
             const f = m.config.filtro;
             
             if (f === 'grayscale' ? economia.tintas.k <= 0.0001 : (economia.tintas.c <= 0.0001 && economia.tintas.m <= 0.0001 && economia.tintas.y <= 0.0001)) {
-                alert(`Reservatório químico vazio na unidade ${m.nome}.`);
+                alert(`Reservatório vazio na unidade ${m.nome}.`);
                 return;
             }
 
@@ -917,7 +915,7 @@
 
         document.getElementById('modal-fechar').onclick = () => DOM.modal.classList.remove('active');
 
-        // Inicialização Global
+        // Inicialização Global Sem Erros
         gerarEstruturaCardsMaquinas();
         mudarMaquinaAtiva(0);
         atualizarHUD();
